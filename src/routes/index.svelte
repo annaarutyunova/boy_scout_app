@@ -1,28 +1,38 @@
 <script>
-    let name = ""
-    let reason = ""
-    let amount = ""
-    let receipt = ""
+    import { v4 as uuid } from 'uuid'
+    let name = "Anna"
+    let reason = "Reason"
+    let amount = "10"
+    let images = []
     let payTo = "scoutbook"
-    let paymentDetails = ""
-
+    let paymentDetails = "Payment details"
+// I added a "multiple to the receipt input"
     const submit = async () => {
         const data = {
+            id: uuid(),
             name,
             reason,
             amount,
-            receipt,
+            images,
             payTo,
             paymentDetails,
         }
         console.log({data})
-        console.log(data)
+        const res = await fetch('/receipt', {
+            method: 'post',
+            body: JSON.stringify(data)
+        })
+        const json = await res.json()
+        console.log(json)
     }
     const onChooseFile = async (ev) => {
         const files = ev.target.files
         console.log({files})
     }
-    
+
+    const cameraOpen = () => {
+        
+    }
 
 
 </script>
@@ -44,10 +54,16 @@
         <input type="text" class="form-control" id="reasonForm" aria-describedby="reasonFormMessage"bind:value={reason} required>
     </div>
     <div class="mb-3">
-        <label for="file" class="form-label">Receipt</label>
-        <div id="fileMessage1" class="form-text">Attach a picture of the receipt</div>
-        <input type="file" class="form-control" id="file" aria-describedby="fileMessage1" bind:value={receipt} required on:change={onChooseFile}>
-        <div id="fileMessage2" class="form-text">Drop files here</div>
+        <label for="file" class="form-label">Receipt Images</label>
+        <div id="fileMessage1" class="form-text">Attach receipt image(s)</div>
+        <div class="images">
+            {#each images as image}
+<!-- Add an img tag for each image. The src is a variable image {image}. display:flex and gap -->
+            <img src={image} alt="receiptImage">
+            <a class="remove-image" href="#" style="display: inline;">&#215;</a>
+            {/each}
+            <button class="btn btn-large" on:click={cameraOpen}>Open Camera</button>
+        </div>
     </div>
     <div class="mb-3">
         <label for="amount" class="form-label">Amount</label>
