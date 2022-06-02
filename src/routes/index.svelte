@@ -9,6 +9,7 @@
     let amount = "10"
     let payTo = "Scoutbook"
     let paymentDetails = "Payment details"
+    let message = ""
 
     const submit = async () => {
         const data = {
@@ -20,19 +21,27 @@
             payTo,
             paymentDetails,
         }
-        console.log({data})
+        // console.log({data})
         const res = await fetch('/receipt', {
             method: 'post',
             body: JSON.stringify(data)
         })
-        const json = await res.json()
-        console.log(json)
+        // const json = await res.json()
+        message = `Your request for $${amount} has been sent`
+        reset()
+        document.body.scrollIntoView();
     }
 
     const cameraDone = (ev) => {
         images.push(ev.detail.image)
         images = images
         cameraShow = false
+    }
+
+    const reset = () => {
+        images = []
+        reason = ""
+        amount = ""
     }
 
 
@@ -45,6 +54,11 @@
     </div>
 </div>
 <form action="/" method="post" on:submit|preventDefault={submit} enctype="multipart/form-data" class="content">
+    {#if message != ""}
+        <div class="alert alert-primary" role="alert">
+            {message}
+        </div>
+    {/if}
     <div class="mb-3">
         <label for="nameForm" class="form-label">Your Name</label>
         <input type="text" class="form-control" id="nameForm" bind:value={name} required> 
@@ -62,7 +76,7 @@
 <!-- Add an img tag for each image. The src is a variable image {image}. display:flex and gap -->
                 <img src={image} alt="Receipt Image">
             {/each}
-            <button class="btn btn-large" on:click={() => cameraShow = true}>Open Camera</button>
+            <button type="button" class="btn btn-lg btn-success" on:click={() => cameraShow = true}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M194.6 32H317.4C338.1 32 356.4 45.22 362.9 64.82L373.3 96H448C483.3 96 512 124.7 512 160V416C512 451.3 483.3 480 448 480H64C28.65 480 0 451.3 0 416V160C0 124.7 28.65 96 64 96H138.7L149.1 64.82C155.6 45.22 173.9 32 194.6 32H194.6zM256 384C309 384 352 341 352 288C352 234.1 309 192 256 192C202.1 192 160 234.1 160 288C160 341 202.1 384 256 384z"/></svg></button>
         </div>
     </div>
     <div class="mb-3">
