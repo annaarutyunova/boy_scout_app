@@ -1,12 +1,15 @@
 <script>
     import { v4 as uuid } from 'uuid'
+    import Camera from "$lib/Camera.svelte"
+
+    let cameraShow = false
+    let images = []
     let name = "Anna"
     let reason = "Reason"
     let amount = "10"
-    let images = []
-    let payTo = "scoutbook"
+    let payTo = "Scoutbook"
     let paymentDetails = "Payment details"
-// I added a "multiple to the receipt input"
+
     const submit = async () => {
         const data = {
             id: uuid(),
@@ -25,13 +28,11 @@
         const json = await res.json()
         console.log(json)
     }
-    const onChooseFile = async (ev) => {
-        const files = ev.target.files
-        console.log({files})
-    }
 
-    const cameraOpen = () => {
-        
+    const cameraDone = (ev) => {
+        images.push(ev.detail.image)
+        images = images
+        cameraShow = false
     }
 
 
@@ -59,10 +60,9 @@
         <div class="images">
             {#each images as image}
 <!-- Add an img tag for each image. The src is a variable image {image}. display:flex and gap -->
-            <img src={image} alt="receiptImage">
-            <a class="remove-image" href="#" style="display: inline;">&#215;</a>
+                <img src={image} alt="Receipt Image">
             {/each}
-            <button class="btn btn-large" on:click={cameraOpen}>Open Camera</button>
+            <button class="btn btn-large" on:click={() => cameraShow = true}>Open Camera</button>
         </div>
     </div>
     <div class="mb-3">
@@ -74,25 +74,25 @@
         <label for="scoutbook" class="form-label">How to receive funds</label>
         <div id="reimbursementMessage" class="form-text">How do you want to receive your reimbursement?</div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="scoutbook" bind:group={payTo} value="scoutbook">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="scoutbook" bind:group={payTo} value="Scoutbook">
             <label class="form-check-label" for="scoutbook">
             Scoutbook credit
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="check" bind:group={payTo} value="check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="check" bind:group={payTo} value="Check">
             <label class="form-check-label" for="check">
             Check
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="venmo" bind:group={payTo} value="venmo">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="venmo" bind:group={payTo} value="Venmo">
             <label class="form-check-label" for="venmo">
             Venmo
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="applePay" bind:group={payTo} value="applePay">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="applePay" bind:group={payTo} value="ApplePay">
             <label class="form-check-label" for="applePay">
             Apple Pay
             </label>
@@ -101,13 +101,13 @@
     <div class="mb-3">
         <label for="paymentDelatils" class="form-label">Payment details</label>
         <div id="paymentDetailsMessage" class="form-text">
-            {#if payTo == "scoutbook"}
+            {#if payTo == "Scoutbook"}
                 Enter the scout's account to credit.
-            {:else if payTo == "check"}
+            {:else if payTo == "Check"}
                 Enter the mailing address to send a check.
-            {:else if payTo == "venmo"}
+            {:else if payTo == "Venmo"}
                 Enter your Venmo username.
-            {:else if payTo == "applePay"}
+            {:else if payTo == "ApplePay"}
                 Enter ApplePay user name or phone number.
             {:else}
                 Unknown payment method.
@@ -118,6 +118,9 @@
     
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+{#if cameraShow}
+  <Camera on:cancel={() => cameraShow = false} on:done={cameraDone} />
+{/if}
 
 
 
@@ -146,7 +149,17 @@
     .form-text{
         padding-bottom:2px;
     }
+
+    .images{
+        display:flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
     
+    .images img{
+        border: 1px solid #555;
+        width: 300px;
+    }
 
     /* .form-control{
         margin-top:20px;

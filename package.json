@@ -27,6 +27,7 @@
 	"type": "module",
 	"dependencies": {
 		"bootstrap": "^5.2.0-beta1",
+		"nodemailer": "^6.7.5",
 		"sqlite3": "^5.0.8",
 		"uuid": "^8.3.2"
 	}
