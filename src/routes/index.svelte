@@ -1,17 +1,17 @@
 <script>
-    import { v4 as uuid } from 'uuid'
-    import Camera from "$lib/Camera.svelte"
+    import { v4 as uuid } from 'uuid' // library that creates an ID that is unique to every request
+    import Camera from "$lib/Camera.svelte" // library that enable to open camerain the app
 
     let cameraShow = false
     let images = []
-    let name = "Anna"
-    let reason = "Reason"
-    let amount = "10"
+    let name = ""
+    let reason = ""
+    let amount = ""
     let payTo = "Scoutbook"
-    let paymentDetails = "Payment details"
+    let paymentDetails = ""
     let message = ""
 
-    const submit = async () => {
+    const submit = async () => { // has an await funciton in it. line 26
         const data = {
             id: uuid(),
             name,
@@ -22,19 +22,18 @@
             paymentDetails,
         }
         // console.log({data})
-        const res = await fetch('/receipt', {
-            method: 'post',
-            body: JSON.stringify(data)
+        const res = await fetch('/receipt', { // fetch sends the data to a path on the server (to the src/routes/receipt.js file).
+            method: 'post', // calls the post function in receipt.js. Post function takes the data and posts it to the server localhost:3000
+            body: JSON.stringify(data) // body is required by the fetch method. It is the info we send to the server. Data object is the info we are sending. JSON.stringify turns the object passed to it into a string to send to a server, where it gets turned into a js object. Done for security purposes
         })
         // const json = await res.json()
         message = `Your request for $${amount} has been sent`
         reset()
-        document.body.scrollIntoView();
+        document.body.scrollIntoView(); // scrolls to the top when submit
     }
 
     const cameraDone = (ev) => {
-        images.push(ev.detail.image)
-        images = images
+        images = [...images, ev.detail.image] //adds an image to images list above
         cameraShow = false
     }
 
@@ -53,7 +52,7 @@
         <p>Submit receipts for reimbersement</p>
     </div>
 </div>
-<form action="/" method="post" on:submit|preventDefault={submit} enctype="multipart/form-data" class="content">
+<form action="/receipt" method="post" on:submit|preventDefault={submit} enctype="multipart/form-data" class="content">
     {#if message != ""}
         <div class="alert alert-primary" role="alert">
             {message}
@@ -76,7 +75,14 @@
 <!-- Add an img tag for each image. The src is a variable image {image}. display:flex and gap -->
                 <img src={image} alt="Receipt Image">
             {/each}
-            <button type="button" class="btn btn-lg btn-success" on:click={() => cameraShow = true}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M194.6 32H317.4C338.1 32 356.4 45.22 362.9 64.82L373.3 96H448C483.3 96 512 124.7 512 160V416C512 451.3 483.3 480 448 480H64C28.65 480 0 451.3 0 416V160C0 124.7 28.65 96 64 96H138.7L149.1 64.82C155.6 45.22 173.9 32 194.6 32H194.6zM256 384C309 384 352 341 352 288C352 234.1 309 192 256 192C202.1 192 160 234.1 160 288C160 341 202.1 384 256 384z"/></svg></button>
+            <div>
+                <button type="button" class="btn btn-lg btn-warning" on:click={() => cameraShow = true}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width:30px;">
+                        <path fill="#fff" d="M194.6 32H317.4C338.1 32 356.4 45.22 362.9 64.82L373.3 96H448C483.3 96 512 124.7 512 160V416C512 451.3 483.3 480 448 480H64C28.65 480 0 451.3 0 416V160C0 124.7 28.65 96 64 96H138.7L149.1 64.82C155.6 45.22 173.9 32 194.6 32H194.6zM256 384C309 384 352 341 352 288C352 234.1 309 192 256 192C202.1 192 160 234.1 160 288C160 341 202.1 384 256 384z"/>
+                    </svg>
+                </button>
+            </div>
+
         </div>
     </div>
     <div class="mb-3">
@@ -132,8 +138,9 @@
     
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+<!-- Button - cameraShow = true. When cancel is clicked, cameraShow = false and the pop disappears -->
 {#if cameraShow}
-  <Camera on:cancel={() => cameraShow = false} on:done={cameraDone} />
+  <Camera on:cancel={() => cameraShow = false} on:done={cameraDone} /> 
 {/if}
 
 
