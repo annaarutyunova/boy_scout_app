@@ -10,6 +10,7 @@
     let payTo = "Scoutbook"
     let paymentDetails = ""
     let message = ""
+    
 
     const submit = async () => { // has an await funciton in it. line 26
         const data = {
@@ -30,6 +31,9 @@
         message = `Your request for $${amount} has been sent`
         reset()
         document.body.scrollIntoView(); // scrolls to the top when submit
+        if (images.length == 0) {
+            
+        }
     }
 
     const cameraDone = (ev) => {
@@ -72,7 +76,7 @@
         <div id="fileMessage1" class="form-text">Attach receipt image(s)</div>
         <div class="images">
             {#each images as image}
-<!-- Add an img tag for each image. The src is a variable image {image}. display:flex and gap -->
+                <!-- Add an img tag for each image. The src is a variable image {image}. display:flex and gap -->
                 <img src={image} alt="Receipt Image">
             {/each}
             <div>
@@ -135,13 +139,16 @@
         </div>
         <textarea class="form-control" id="paymentDelatils" rows="3" bind:value={paymentDetails} required></textarea>
     </div>
-    
-    <button type="submit" class="btn btn-primary">Submit</button>
+    {#if images.length == 0}
+        <p>Please attach a picture of your reciept</p>
+    {/if}
+    <button type="submit" class="btn btn-primary" disabled={images.length == 0}>Submit</button>
 </form>
 <!-- Button - cameraShow = true. When cancel is clicked, cameraShow = false and the pop disappears -->
 {#if cameraShow}
   <Camera on:cancel={() => cameraShow = false} on:done={cameraDone} /> 
 {/if}
+
 
 
 

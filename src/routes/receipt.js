@@ -2,12 +2,12 @@ import fs from 'fs'
 import path from 'path'
 import nodemailer from "nodemailer"
 
-export const post = async (ctx) => {
-	const data = await ctx.request.json()
+export const post = async (ctx) => {  
+	const data = await ctx.request.json() // turns the string body (was an object) into a js object
 
-    fs.mkdirSync(path.join('static', 'data', data.id), {recursive: true})
+    fs.mkdirSync(path.join('static', 'data'), {recursive: true}) // makes sure the data directory exists
 
-    fs.writeFileSync(path.join('static', 'data', data.id, 'data.json'), JSON.stringify(data))
+    fs.writeFileSync(path.join('static', 'data', `${data.id}.json`), JSON.stringify(data)) // saves the data into a json file
 
     emailReceipt(data)
 
@@ -36,7 +36,7 @@ const emailReceipt = (data) => {
         <p>${data.payTo}</p>
         <p>${data.paymentDetails}</p>
         ${data.images.map((image,i) => `<img src="${image}" alt="Image">`).join(" ")}
-    `
+        `
 
     const transporter = nodemailer.createTransport({
         host: "mx.aeromail.io",
@@ -49,11 +49,11 @@ const emailReceipt = (data) => {
       });
 
        // send mail with defined transport object
-  let info = transporter.sendMail({
-    from: '"Troop 69 Website" <system@troop69.co>', // sender address
-    to: "anna.arutyunova8848@gmail.com, dan@eparklabs.com", // list of receivers
-    subject: "Reimbursement request", // Subject line
-    text: bodyText, // plain text body
-    html: bodyHtml, // html body
-  });
+    let info = transporter.sendMail({
+        from: '"Troop 69 Website" <system@troop69.co>', // sender address
+        to: "anna.arutyunova8848@gmail.com, dan@eparklabs.com", // list of receivers
+        subject: "Reimbursement request", // Subject line
+        text: bodyText, // plain text body
+        html: bodyHtml, // html body
+    });
 }
